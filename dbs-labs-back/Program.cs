@@ -1,4 +1,5 @@
 using System.Numerics;
+using dbs_labs_back.Models;
 using dbs_labs_back.Utils;
 using Microsoft.AspNetCore.Mvc;
 
@@ -50,4 +51,3 @@ app.MapGet("/pseudo-random-numbers",
     .WithOpenApi();
 app.Run();
 
-public record LinearCongruentialGeneratorResult(List<string> PseudoRandomNumbers, int Period);

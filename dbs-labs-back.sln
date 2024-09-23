@@ -2,6 +2,8 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dbs-labs-back", "dbs-labs-back\dbs-labs-back.csproj", "{0A90774D-FDB8-48FF-8B0B-8EA828B2873B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dbs-labs-back.test", "dbs-labs-back.test\dbs-labs-back.test.csproj", "{97064282-6A90-46EB-9A3A-353D1D799078}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -12,5 +14,9 @@ Global
 		{0A90774D-FDB8-48FF-8B0B-8EA828B2873B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0A90774D-FDB8-48FF-8B0B-8EA828B2873B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0A90774D-FDB8-48FF-8B0B-8EA828B2873B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{97064282-6A90-46EB-9A3A-353D1D799078}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{97064282-6A90-46EB-9A3A-353D1D799078}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{97064282-6A90-46EB-9A3A-353D1D799078}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{97064282-6A90-46EB-9A3A-353D1D799078}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
