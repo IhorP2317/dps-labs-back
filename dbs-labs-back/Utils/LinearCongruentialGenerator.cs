@@ -1,7 +1,6 @@
-﻿
-using dbs_labs_back.Models;
+﻿using dbs_labs_back.Models;
 
-namespace dbs_labs_back.Utils;
+namespace dbs_labs_back.Utils ;
 
 using System.Collections.Generic;
 using System.IO;
@@ -9,80 +8,106 @@ using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
 
-public class LinearCongruentialGenerator
-{
-    public async Task<LinearCongruentialGeneratorResult> GenerateRandomNumbersAndWriteToFile(int a,
-        int X0,
-        int c, 
-        BigInteger m, 
-        int sequenceLength)
+    public class LinearCongruentialGenerator
     {
-        BigInteger Xn = X0;
-        BigInteger? X1 = null; 
-        var randomNumbersSequence = new List<string> { X0.ToString() };
-        int period = 0;
-        bool periodFound = false; 
+        private readonly int a;
+        private readonly int c;
+        private readonly BigInteger m;
+        private readonly int sequenceLength;
+        private readonly BigInteger X0;
+        private BigInteger _Xn;
 
-        await using var writer = new StreamWriter("result.txt", false);
-        var randomNumbersSequenceToBeWritten = new StringBuilder(); 
-        const int batchSize = 1_000_000;
-        randomNumbersSequenceToBeWritten.Append(X0.ToString());
-
-        while (true)
+        public LinearCongruentialGenerator(int a, int X0, int c, BigInteger m, int sequenceLength = 0)
         {
-            BigInteger prev = Xn;
-            Xn = (a * Xn + c) % m;
+            this.a = a;
+            this.X0 = X0;
+            this.c = c;
+            this.m = m;
+            this.sequenceLength = sequenceLength;
+           _Xn = X0;
+        }
 
-         
-            if (!periodFound)
-            {
-                period++;
-            }
 
-           
-            if (period == 1)
-            {
-                X1 = Xn;
-            }
+        public async Task<LinearCongruentialGeneratorResult> GenerateRandomNumbersAndWriteToFile()
+        {
+           BigInteger currentNumber = X0;
+            BigInteger? X1 = null;
+            var randomNumbersSequence = new List<string> { X0.ToString() };
+            int period = 0;
+            bool periodFound = false;
 
-          
-            if (Xn == prev || Xn == X0 || (X1.HasValue && period > 1 && Xn == X1.Value))
-            {
-                periodFound = true;
-            }
+            await using var writer = new StreamWriter("result.txt", false);
+            var randomNumbersSequenceToBeWritten = new StringBuilder();
+            const int batchSize = 1_000_000;
+            randomNumbersSequenceToBeWritten.Append(X0.ToString());
 
-          
-            if (randomNumbersSequence.Count < sequenceLength)
+            while (true)
             {
-                randomNumbersSequence.Add(Xn.ToString());
-            }
+                BigInteger prev = currentNumber;
+                currentNumber = SequenceFormula(currentNumber);
 
-          
-            if (!periodFound)
-            {
-                randomNumbersSequenceToBeWritten.Append(", " + Xn);
-                if (period % batchSize == 0)
+
+                if (!periodFound)
                 {
-                    await writer.WriteAsync(randomNumbersSequenceToBeWritten.ToString());
-                    randomNumbersSequenceToBeWritten.Clear();
-                    await writer.FlushAsync();
+                    period++;
+                }
+
+
+                if (period == 1)
+                {
+                    X1 = currentNumber;
+                }
+
+
+                if (currentNumber == prev || currentNumber == X0 || (X1.HasValue && period > 1 && currentNumber == X1.Value))
+                {
+                    periodFound = true;
+                }
+
+
+                if (randomNumbersSequence.Count < sequenceLength)
+                {
+                    randomNumbersSequence.Add(currentNumber.ToString());
+                }
+
+
+                if (!periodFound)
+                {
+                    randomNumbersSequenceToBeWritten.Append(", " + currentNumber);
+                    if (period % batchSize == 0)
+                    {
+                        await writer.WriteAsync(randomNumbersSequenceToBeWritten.ToString());
+                        randomNumbersSequenceToBeWritten.Clear();
+                        await writer.FlushAsync();
+                    }
+                }
+
+
+                if (periodFound && randomNumbersSequence.Count >= sequenceLength)
+                {
+                    break;
                 }
             }
 
-          
-            if (periodFound && randomNumbersSequence.Count >= sequenceLength)
+            if (randomNumbersSequenceToBeWritten.Length > 0)
             {
-                break;
+                await writer.WriteAsync(randomNumbersSequenceToBeWritten.ToString());
+                await writer.FlushAsync();
             }
+
+            return new LinearCongruentialGeneratorResult(randomNumbersSequence, period);
+        }
+
+        public BigInteger NextNumber()
+        {
+            BigInteger currentNumber = this._Xn;
+            _Xn = SequenceFormula(currentNumber);
+            return currentNumber;
         }
         
-        if (randomNumbersSequenceToBeWritten.Length > 0)
-        {
-            await writer.WriteAsync(randomNumbersSequenceToBeWritten.ToString());
-            await writer.FlushAsync();
-        }
 
-        return new LinearCongruentialGeneratorResult(randomNumbersSequence, period);
+
+        public void Reset() => _Xn = X0;
+
+        private BigInteger SequenceFormula(BigInteger Xn) => (a * Xn + c) % m;
     }
-}
-
