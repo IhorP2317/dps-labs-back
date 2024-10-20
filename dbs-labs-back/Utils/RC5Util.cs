@@ -68,6 +68,8 @@ namespace dbs_labs_back.Utils ;
             var s = BuildExpandedKeyTable();
             var cnPrev = GetRandomBytesForInitVector();
             var encodedFileContent = new byte[cnPrev.Length + paddedBytes.Length];
+            Array.Copy(cnPrev, 0, encodedFileContent, 0, cnPrev.Length);
+
 
 
             EncipherECB(cnPrev, encodedFileContent, inStart: 0, outStart: 0, s);
