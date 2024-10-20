@@ -66,8 +66,9 @@ namespace dbs_labs_back.Utils ;
             var paddedBytes = input.Concat( GetPadding(input)).ToArray();
             var bytesPerBlock = _wordsFactory.BytesPerBlock;
             var s = BuildExpandedKeyTable();
-            var cnPrev = GetRandomBytesForInitVector().Take(bytesPerBlock).ToArray();
+            var cnPrev = GetRandomBytesForInitVector();
             var encodedFileContent = new byte[cnPrev.Length + paddedBytes.Length];
+
 
             EncipherECB(cnPrev, encodedFileContent, inStart: 0, outStart: 0, s);
 
@@ -100,7 +101,9 @@ namespace dbs_labs_back.Utils ;
             var bytesPerBlock = _wordsFactory.BytesPerBlock;
             var s = BuildExpandedKeyTable();
             var cnPrev = new byte[bytesPerBlock];
-            var decodedFileContent = new byte[input.Length - cnPrev.Length];
+            Array.Copy(input, 0, cnPrev, 0, bytesPerBlock);
+
+            var decodedFileContent = new byte[input.Length - bytesPerBlock];
 
             DecipherECB(
                 inBuf: input,
@@ -188,27 +191,23 @@ namespace dbs_labs_back.Utils ;
 
         private byte[] GetRandomBytesForInitVector()
         {
-            var ivParts = new List<byte>();
+            int ivLength = _wordsFactory.BytesPerBlock;
+            var ivBytes = new byte[ivLength];
+            int bytesFilled = 0;
 
-            while (ivParts.Count < _wordsFactory.BytesPerBlock)
+            while (bytesFilled < ivLength)
             {
-              
-                BigInteger nextNumber = _numberGenerator.NextNumber();
-        
-               
-                byte[] numberBytes = nextNumber.ToByteArray();
-                
-                ivParts.AddRange(numberBytes);
+                ulong nextNumber = (ulong)_numberGenerator.NextNumber();
+                byte[] numberBytes = BitConverter.GetBytes(nextNumber);
+
+                int bytesToCopy = Math.Min(numberBytes.Length, ivLength - bytesFilled);
+                Array.Copy(numberBytes, 0, ivBytes, bytesFilled, bytesToCopy);
+                bytesFilled += bytesToCopy;
             }
 
-           
-            if (ivParts.Count > _wordsFactory.BytesPerBlock)
-            {
-                ivParts = ivParts.Take(_wordsFactory.BytesPerBlock).ToList();
-            }
-
-            return ivParts.ToArray();
+            return ivBytes;
         }
+
 
 
         private IWord[] BuildExpandedKeyTable()
