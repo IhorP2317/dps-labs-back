@@ -1,9 +1,7 @@
-using System.Numerics;
 using Carter;
 using dbs_labs_back.Middlewares;
-using dbs_labs_back.Models;
 using dbs_labs_back.Utils;
-using Microsoft.AspNetCore.Mvc;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -11,6 +9,7 @@ var builder = WebApplication.CreateBuilder(args);
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
     builder.Services.AddEndpointsApiExplorer();
     builder.Services.AddSwaggerGen();
+    builder.Services.AddSingleton<RSAUtil>();
     builder.Services.AddCarter();
 
     builder.Services.AddCors(options =>
@@ -22,7 +21,6 @@ var builder = WebApplication.CreateBuilder(args);
                 .AllowAnyHeader();
         });
     });
-
     var app = builder.Build();
     app.UseMiddleware<ExceptionMiddleware>();
 

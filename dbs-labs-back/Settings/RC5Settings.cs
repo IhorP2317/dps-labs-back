@@ -8,6 +8,6 @@ namespace dbs_labs_back.Settings ;
 
         public WordLengthInBitsEnum WordLengthInBits { get; set; }
         
-        public KeyLengthInBytesEnum KeyLengthInBytes { get; set; }
+        public KeyLengthInBytesRC5Enum KeyLengthInBytes { get; set; }
         
     }

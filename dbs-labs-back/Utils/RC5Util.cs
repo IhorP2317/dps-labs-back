@@ -31,32 +31,29 @@ namespace dbs_labs_back.Utils ;
         
         public  byte[] GetMD5HashedKeyForRC5(
              byte[] key,
-            KeyLengthInBytesEnum keyLengthInBytes)
+            KeyLengthInBytesRC5Enum keyLengthInBytesRc5)
         {
-            if (key is null)
-            {
-                throw new ArgumentNullException(nameof(key));
-            }
+        ArgumentNullException.ThrowIfNull(key);
 
-            var hasher = new Md5Generator();
+        var hasher = new Md5Generator();
             var bytesHash = hasher.ComputeHash(key).ToByteArray();
 
-            if (keyLengthInBytes == KeyLengthInBytesEnum.Bytes_8)
+            if (keyLengthInBytesRc5 == KeyLengthInBytesRC5Enum.Bytes_8)
             {
                 bytesHash = bytesHash.Take(bytesHash.Length / 2).ToArray();
             }
-            else if (keyLengthInBytes == KeyLengthInBytesEnum.Bytes_32)
+            else if (keyLengthInBytesRc5 == KeyLengthInBytesRC5Enum.Bytes_32)
             {
                 bytesHash = bytesHash
                     .Concat(hasher.ComputeHash(bytesHash).ToByteArray())
                     .ToArray();
             }
 
-            if (bytesHash.Length != (int)keyLengthInBytes)
+            if (bytesHash.Length != (int)keyLengthInBytesRc5)
             {
                 throw new InvalidOperationException(
                     $"Internal error at {nameof(GetMD5HashedKeyForRC5)} method, " +
-                    $"hash result is not equal to {(int)keyLengthInBytes}.");
+                    $"hash result is not equal to {(int)keyLengthInBytesRc5}.");
             }
 
             return bytesHash;
