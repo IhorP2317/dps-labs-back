@@ -27,7 +27,7 @@ namespace dbs_labs_back.Endpoints ;
                 .WithOpenApi();
         }
 
-        private static async Task<IResult> GetHashFromString([FromQuery] string input)
+        private static  IResult GetHashFromString([FromQuery] string input)
         {
             var md5 = new Md5Generator();
             md5.ComputeHash(input);
@@ -48,7 +48,7 @@ namespace dbs_labs_back.Endpoints ;
             }
 
             var filename = $"{DateTime.Now.Ticks}.md5";
-            File.WriteAllText(filename, md5.HashAsString);
+            await File.WriteAllTextAsync(filename, md5.HashAsString);
 
             return Results.Ok(md5.HashAsString);
         }

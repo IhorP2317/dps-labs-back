@@ -10,6 +10,7 @@ var builder = WebApplication.CreateBuilder(args);
     builder.Services.AddEndpointsApiExplorer();
     builder.Services.AddSwaggerGen();
     builder.Services.AddSingleton<RSAUtil>();
+    builder.Services.AddSingleton<DSAUtil>();
     builder.Services.AddCarter();
 
     builder.Services.AddCors(options =>
